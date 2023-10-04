@@ -107,6 +107,10 @@ class Name(Expr):
         None
         """
         "*** YOUR CODE HERE ***"
+        if self.var_name in env:
+            return env[self.var_name]
+        else:
+            return None
 
     def __str__(self):
         return self.var_name
@@ -173,6 +177,9 @@ class CallExpr(Expr):
         Number(14)
         """
         "*** YOUR CODE HERE ***"
+        operator_eval = self.operator.eval(env)
+        arg_lst = [arg.eval(env) for arg in self.operands]
+        return operator_eval.apply(arg_lst)
 
     def __str__(self):
         function = str(self.operator)
@@ -282,6 +289,10 @@ class LambdaFunction(Value):
             raise TypeError("Oof! Cannot apply number {} to arguments {}".format(
                 comma_separated(self.parameters), comma_separated(arguments)))
         "*** YOUR CODE HERE ***"
+        curr_env = self.parent.copy()
+        for para, arg in zip(self.parameters, arguments):
+            curr_env[para] = arg
+        return self.body.eval(curr_env)
 
     def __str__(self):
         definition = LambdaExpr(self.parameters, self.body)
